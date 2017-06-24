@@ -2,29 +2,110 @@
 title: "Practical Machine Learning Course Project"
 author: "Wayne Heller"
 date: "June 17, 2017"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Overview
+The goal of this project is to create a prediction model to classify whether a study participant is correctly performing an exercise or if he/she is making a typical mistake in form.   The data from accelerometers and other measurement devices on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
 
-## R Markdown
+The following description comes directly from the Coursera assignment:  
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it.  
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
 
-```{r cars}
-summary(cars)
+## Executive Summary
+Using a xxx model, I was able to achieve an accuracy of YYY on the data provided.  The following modeling approaches were considered prior to final model selection.
+
+## Data Preparation and Partitioning
+The potential features in this dataset include direct measurements of sensors as well as various summarizations of those measurements such as min, max, variance, kurtosis, etc. aggregated over what I assume is 2.5 second windows.  I came to this conclusion by reading the initial experimenter's report.  There are several issues with the summarization data, the largest is that it appears that it is mapped incorrectly.  For example, max_roll_belt appears to contain the summarization of max_yaw_belt.  There is also a feature called "new_window" and another named "num_window" that appear to indicated when a new set of aggregation has occured; however, these two are not insync.  Specifically, all changes in num_window are not indicated by a new_window value of 'yes'.  In addition, the validation dataset for this assignment contains just a very small sample (20) of sensor measurements, so using the summary info would be problematic. *CONCLUSION: Drop the summarization columns from potential feature selection.*  
+
+Another challenge is that there is a lot of sensor data, over 19,600 rows of it, which makes fitting a model such as random forest computationally intensive for my aging laptop.  Much of this sensor data is subsequent readings of the same activity sampled at a very rapid rate.  An approach to simplify the dataset is to aggregate measurments using median by the num_windows, after validating that num_window is unique to classe.  
+
+In order to compare the accuracy of models using the aggregation approach to the raw data approach, I needed to find a way to partition the data such that I could get an apples to apples comparison.  I determined that there is a 1:1 relationship between num_window and classe and that partitioning on num_window give me a roughly equivalent distribution across classe. 
+
+```{r echo=FALSE}
+library(caret)
+
+training <- read.csv("pml-training.csv")
+validation <- read.csv("pml-testing.csv")
+
+# Validation that num_window is unique to classe allow the partition and aggregation of data by num_window
+num_window_A <- unique(training[training$classe=='A', ]$num_window)
+num_window_B <- unique(training[training$classe=='B', ]$num_window)
+num_window_C <- unique(training[training$classe=='c', ]$num_window)
+num_window_D <- unique(training[training$classe=='D', ]$num_window)
+num_window_E <- unique(training[training$classe=='E', ]$num_window)
+Reduce(intersect, list(num_window_A, num_window_B, num_window_C, num_window_D, num_window_E))
+
+# Need to split the training dataset into training and testing
+
+#Confirm that splitting on num_window gives me the approximately the same distribution as splitting on classe
+inTrain <- createDataPartition(training$classe, p=.6, list=FALSE)
+measurementrows.training <- training[inTrain, ]
+measurementrows.testing <- training[-inTrain, ]
+qplot(x = classe, data=measurementrows.training, fill=classe)
+
+inTrain <- createDataPartition(training$num_window, p=.6, list=FALSE)
+measurementrows.training <- training[inTrain, ]
+measurementrows.testing <- training[-inTrain, ]
+qplot(x = classe, data=measurementrows.training, fill=classe)
+
+# identify measurement columns from summary columns from identification columns
+summary.col.name.prefixes <- "kurtosis|skewness|max|min|var|amplitude|var|avg|stddev"
+summary.col.names <- names(training)[grepl(summary.col.name.prefixes, names(training))]
+
+id.col.names <- "X|user_name|raw_timestamp_part_1|raw_timestamp_part_2|cvtd_timestamp|new_window|num_window|classe"
+
+measurement.col.names <- names(training)[!grepl(summary.col.name.prefixes, names(training)) & !grepl(id.col.names, names(training))]
+
+
+# Create testing and training datasets based on summarization by num_window, classe
+aggregatedrows <- aggregate(training[ , c(measurement.col.names)], by=list(training$num_window, training$classe), FUN = median, na.rm=TRUE)
+names(aggregatedrows)[1:2] <- c("num_window", "classe")
+
+# Here's where some magic happens.  Split into training and testing based on prior partition to keep apples to apples, this is why I needed to partition on num_window
+measurementrows.training.num_windows <- unique(measurementrows.training$num_window)
+measurementrows.testing.num_windows <- unique(measurementrows.testing$num_window)
+
+aggregatedrows.training <- aggregatedrows[aggregatedrows$num_window %in% measurementrows.training.num_windows , ]
+
+aggregatedrows.testing <- aggregatedrows[aggregatedrows$num_window %in% measurementrows.testing.num_windows, ]
+
+
 ```
 
-## Including Plots
+```{r cache=TRUE}
+# Models to try:
+# 1) Random Forest
+# 2) GBM
+# 3) CART
 
-You can also embed plots, for example:
+# Random Forest
+modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+modFit.aggregated.rf <- train(classe ~ ., method="rf", data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregatedrows.testing$classe)$overall[1]
+
+```
+```{r cache=TRUE}
+modFit.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
+
+modFit.aggregated.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
+```
+```{r cache=TRUE}
+modFit.rpart <- train(classe ~ ., method="rpart", data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
+
+modFit.aggregated.rpart <- train(classe ~ ., method="rpart", data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
