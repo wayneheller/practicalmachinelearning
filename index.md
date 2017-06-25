@@ -1,15 +1,8 @@
----
-title: "Practical Machine Learning Course Project"
-author: "Wayne Heller"
-date: "June 17, 2017"
-output: 
-  html_document: 
-    keep_md: yes
----
+# Practical Machine Learning Course Project
+Wayne Heller  
+June 17, 2017  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 ## Overview
 The goal of this project is to create a prediction model to classify whether a study participant is correctly performing an exercise or if he/she is making a typical mistake in form.   The data is from accelerometers and other measurement devices on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
 
@@ -33,15 +26,10 @@ In order to compare the accuracy of models using the aggregation approach to the
 
 **CONCLUSION: I determined that there is a 1:1 relationship between num_window and classe and that partitioning on num_window give me a roughly equivalent distribution across classe.  See below** 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-library(caret)
 
-training <- read.csv("pml-training.csv")
-validation <- read.csv("pml-testing.csv")
 
-```
 
-``` {r echo=TRUE}
+```r
 num_window_A <- unique(training[training$classe=='A', ]$num_window)
 num_window_B <- unique(training[training$classe=='B', ]$num_window)
 num_window_C <- unique(training[training$classe=='c', ]$num_window)
@@ -50,26 +38,37 @@ num_window_E <- unique(training[training$classe=='E', ]$num_window)
 Reduce(intersect, list(num_window_A, num_window_B, num_window_C, num_window_D, num_window_E))
 ```
 
+```
+## integer(0)
+```
+
 ### Split the training dataset into training and testing
 
 First onfirm that splitting on num_window gives me the approximately the same distribution as splitting on classe
 
-``` {r echo =TRUE}
+
+```r
 inTrain <- createDataPartition(training$classe, p=.6, list=FALSE)
 measurementrows.training <- training[inTrain, ]
 measurementrows.testing <- training[-inTrain, ]
 qplot(x = classe, data=measurementrows.training, fill=classe, main="Distribution of Classe When Partitioning By classe")
+```
 
+![](index_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 inTrain <- createDataPartition(training$num_window, p=.6, list=FALSE)
 measurementrows.training <- training[inTrain, ]
 measurementrows.testing <- training[-inTrain, ]
 qplot(x = classe, data=measurementrows.training, fill=classe, main="Distribution of Classe When Partitioning By num_window")
-
 ```
+
+![](index_files/figure-html/unnamed-chunk-3-2.png)<!-- -->
 
 **Identify measurement columns from summary columns from identification columns**
 
-``` {r echo=TRUE}
+
+```r
 summary.col.name.prefixes <- "kurtosis|skewness|max|min|var|amplitude|var|avg|stddev"
 summary.col.names <- names(training)[grepl(summary.col.name.prefixes, names(training))]
 
@@ -80,7 +79,8 @@ measurement.col.names <- names(training)[!grepl(summary.col.name.prefixes, names
 
 **Create testing and training datasets based on aggregation by num_window and classe**
 
-``` {r echo=TRUE}
+
+```r
 aggregatedrows <- aggregate(training[ , c(measurement.col.names)], by=list(training$num_window, training$classe), FUN = median, na.rm=TRUE)
 names(aggregatedrows)[1:2] <- c("num_window", "classe")
 ```
@@ -88,14 +88,14 @@ names(aggregatedrows)[1:2] <- c("num_window", "classe")
 **Here's where some magic happens.**  
 Split into training and testing based on prior partition to keep apples to apples, this is why I needed to partition the data on num_window
 
-``` {r echo=TRUE}
+
+```r
 measurementrows.training.num_windows <- unique(measurementrows.training$num_window)
 measurementrows.testing.num_windows <- unique(measurementrows.testing$num_window)
 
 aggregatedrows.training <- aggregatedrows[aggregatedrows$num_window %in% measurementrows.training.num_windows , ]
 
 aggregatedrows.testing <- aggregatedrows[aggregatedrows$num_window %in% measurementrows.testing.num_windows, ]
-
 ```
 
 **TO CLARIFY:  **  
@@ -107,8 +107,8 @@ At this point there are two training and two test data.frames build of of the pm
 ## MODEL CREATION AND SELECTION
 Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and Classification Trees (rpart) and test with both datasets.  For feature selection, after removing the summary columns, I chose to build the models off of the raw sensor data columns.
 
-```{r cache=TRUE, echo=TRUE}
 
+```r
 # Random Forest
 #modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
 #confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
@@ -145,7 +145,8 @@ A requirement of this project is a discussion of cross validation methods used. 
 2) The Random Forest and Gradient Boosting approaches yeilded high accuracy in comparison to the classification tree approach.  
 
 3) Prediction on validation dataset using the Random Forest model:
-```{r echo=TRUE}
+
+```r
 #predict(modFit.rf, validation)
 #predict(modFit.aggregated.rf, validation)
 ```
