@@ -100,9 +100,10 @@ aggregatedrows.testing <- aggregatedrows[aggregatedrows$num_window %in% measurem
 
 **TO CLARIFY:  **  
 At this point there are two training and two test data.frames build of of the pml-training.csv data set:  
-+ measurementrows.training, measurementrows.testing contain all 19,600+ rows 
-+ aggregatedrowss.training, aggregatedrows.testing contain the median of all sensor measurements aggregated by num_window  
-** See section above for why I believe aggregating and partitioning on num_window is a valid approach **
+**measurementrows.training, measurementrows.testing** contain all 19,600+ rows  
+**aggregatedrowss.training, aggregatedrows.testing** contain the median of all sensor measurements aggregated by num_window  
+
+**See section above for why I believe aggregating and partitioning on num_window is a valid approach and Conclusion below where this approach dead ended.**
 
 ## MODEL CREATION AND SELECTION
 Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and Classification Trees (rpart) and test with both datasets.  For feature selection, after removing the summary columns, I chose to build the models off of the raw sensor data columns.
@@ -110,25 +111,27 @@ Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and 
 ```{r cache=TRUE, echo=TRUE}
 
 # Random Forest
-#modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
-#modFit.rf$finalModel
+modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
+modFit.rf$finalModel
 
-#modFit.aggregated.rf <- train(classe ~ ., method="rf", data = aggregatedrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregatedrows.testing$classe)$overall[1]
-#modFit.aggregated.rf$finalModel
+modFit.aggregated.rf <- train(classe ~ ., method="rf", data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregatedrows.testing$classe)$overall[1]
+modFit.aggregated.rf$finalModel
 
-#modFit.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = measurementrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
+# Gradient Boosting
+modFit.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 
-#modFit.aggregated.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = aggregatedrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
+modFit.aggregated.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
 
-#modFit.rpart <- train(classe ~ ., method="rpart", data = measurementrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
+# Classification Tree
+modFit.rpart <- train(classe ~ ., method="rpart", data = measurementrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 
-#modFit.aggregated.rpart <- train(classe ~ ., method="rpart", data = aggregatedrows.training[, c("classe", measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
+modFit.aggregated.rpart <- train(classe ~ ., method="rpart", data = aggregatedrows.training[, c("classe", measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
 
 # Loading required package: rpart
 # Accuracy 
@@ -146,8 +149,8 @@ A requirement of this project is a discussion of cross validation methods used. 
 
 3) Prediction on validation dataset using the Random Forest model:
 ```{r echo=TRUE}
-#predict(modFit.rf, validation)
-#predict(modFit.aggregated.rf, validation)
+predict(modFit.rf, validation)
+predict(modFit.aggregated.rf, validation)
 ```
 
 The submission of the modFit.rf prediction resulted in a score of 20/20 100%.

@@ -161,7 +161,7 @@ qplot(x = classe, data=measurementrows.training, fill=classe, main=&quot;Distrib
 measurementrows.training &lt;- training[inTrain, ]
 measurementrows.testing &lt;- training[-inTrain, ]
 qplot(x = classe, data=measurementrows.training, fill=classe, main=&quot;Distribution of Classe When Partitioning By num_window&quot;)</code></pre>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <p><strong>Identify measurement columns from summary columns from identification columns</strong></p>
 <pre class="r"><code>summary.col.name.prefixes &lt;- &quot;kurtosis|skewness|max|min|var|amplitude|var|avg|stddev&quot;
 summary.col.names &lt;- names(training)[grepl(summary.col.name.prefixes, names(training))]
@@ -182,35 +182,94 @@ aggregatedrows.training &lt;- aggregatedrows[aggregatedrows$num_window %in% meas
 aggregatedrows.testing &lt;- aggregatedrows[aggregatedrows$num_window %in% measurementrows.testing.num_windows, ]</code></pre>
 <p><strong>TO CLARIFY: </strong><br />
 At this point there are two training and two test data.frames build of of the pml-training.csv data set:<br />
-+ measurementrows.training, measurementrows.testing contain all 19,600+ rows + aggregatedrowss.training, aggregatedrows.testing contain the median of all sensor measurements aggregated by num_window<br />
-** See section above for why I believe aggregating and partitioning on num_window is a valid approach **</p>
+<strong>measurementrows.training, measurementrows.testing</strong> contain all 19,600+ rows<br />
+<strong>aggregatedrowss.training, aggregatedrows.testing</strong> contain the median of all sensor measurements aggregated by num_window</p>
+<p><strong>See section above for why I believe aggregating and partitioning on num_window is a valid approach and Conclusion below where this approach dead ended.</strong></p>
 </div>
 </div>
 <div id="model-creation-and-selection" class="section level2">
 <h2>MODEL CREATION AND SELECTION</h2>
 <p>Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and Classification Trees (rpart) and test with both datasets. For feature selection, after removing the summary columns, I chose to build the models off of the raw sensor data columns.</p>
 <pre class="r"><code># Random Forest
-#modFit.rf &lt;- train(classe ~ ., method=&quot;rf&quot;, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
-#modFit.rf$finalModel
-
-#modFit.aggregated.rf &lt;- train(classe ~ ., method=&quot;rf&quot;, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregatedrows.testing$classe)$overall[1]
-#modFit.aggregated.rf$finalModel
-
-#modFit.gbm &lt;- train(classe ~ ., method=&quot;gbm&quot;, verbose=FALSE, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
-
-#modFit.aggregated.gbm &lt;- train(classe ~ ., method=&quot;gbm&quot;, verbose=FALSE, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
-
-#modFit.rpart &lt;- train(classe ~ ., method=&quot;rpart&quot;, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
-
-#modFit.aggregated.rpart &lt;- train(classe ~ ., method=&quot;rpart&quot;, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
-#confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]
-
-# Loading required package: rpart
+modFit.rf &lt;- train(classe ~ ., method=&quot;rf&quot;, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])</code></pre>
+<pre><code>## Loading required package: randomForest</code></pre>
+<pre><code>## randomForest 4.6-12</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>## 
+## Attaching package: 'randomForest'</code></pre>
+<pre><code>## The following object is masked from 'package:ggplot2':
+## 
+##     margin</code></pre>
+<pre class="r"><code>confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]</code></pre>
+<pre><code>##  Accuracy 
+## 0.9884047</code></pre>
+<pre class="r"><code>modFit.rf$finalModel</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = param$mtry) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 27
+## 
+##         OOB estimate of  error rate: 0.83%
+## Confusion matrix:
+##      A    B    C    D    E class.error
+## A 3357    4    1    1    0 0.001784121
+## B   19 2288    9    1    0 0.012516185
+## C    0    9 2033    6    0 0.007324219
+## D    0    1   31 1892    2 0.017653167
+## E    0    2    3    9 2106 0.006603774</code></pre>
+<pre class="r"><code>modFit.aggregated.rf &lt;- train(classe ~ ., method=&quot;rf&quot;, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregatedrows.testing$classe)$overall[1]</code></pre>
+<pre><code>## Accuracy 
+##        1</code></pre>
+<pre class="r"><code>modFit.aggregated.rf$finalModel</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = param$mtry) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 11.33%
+## Confusion matrix:
+##     A   B   C   D   E class.error
+## A 237   3   1   1   0  0.02066116
+## B  21 135   9   2   1  0.19642857
+## C   0  15 132   2   0  0.11409396
+## D   3   0  17 116   5  0.17730496
+## E   0   6   6   5 139  0.10897436</code></pre>
+<pre class="r"><code># Gradient Boosting
+modFit.gbm &lt;- train(classe ~ ., method=&quot;gbm&quot;, verbose=FALSE, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])</code></pre>
+<pre><code>## Loading required package: gbm</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## 
+## Attaching package: 'survival'</code></pre>
+<pre><code>## The following object is masked from 'package:caret':
+## 
+##     cluster</code></pre>
+<pre><code>## Loading required package: splines</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>## Loaded gbm 2.1.3</code></pre>
+<pre><code>## Loading required package: plyr</code></pre>
+<pre class="r"><code>confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]</code></pre>
+<pre><code>##  Accuracy 
+## 0.9620285</code></pre>
+<pre class="r"><code>modFit.aggregated.gbm &lt;- train(classe ~ ., method=&quot;gbm&quot;, verbose=FALSE, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]</code></pre>
+<pre><code>##  Accuracy 
+## 0.9988304</code></pre>
+<pre class="r"><code># Classification Tree
+modFit.rpart &lt;- train(classe ~ ., method=&quot;rpart&quot;, data = measurementrows.training[, c(&quot;classe&quot;, measurement.col.names)])</code></pre>
+<pre><code>## Loading required package: rpart</code></pre>
+<pre class="r"><code>confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]</code></pre>
+<pre><code>##  Accuracy 
+## 0.4956677</code></pre>
+<pre class="r"><code>modFit.aggregated.rpart &lt;- train(classe ~ ., method=&quot;rpart&quot;, data = aggregatedrows.training[, c(&quot;classe&quot;, measurement.col.names)])
+confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggregatedrows.testing$classe)$overall[1]</code></pre>
+<pre><code>## Accuracy 
+## 0.548538</code></pre>
+<pre class="r"><code># Loading required package: rpart
 # Accuracy 
 #0.4933741 
 # Accuracy 
@@ -227,8 +286,12 @@ At this point there are two training and two test data.frames build of of the pm
 <li><p>The Random Forest and Gradient Boosting approaches yeilded high accuracy in comparison to the classification tree approach.</p></li>
 <li><p>Prediction on validation dataset using the Random Forest model:</p></li>
 </ol>
-<pre class="r"><code>#predict(modFit.rf, validation)
-#predict(modFit.aggregated.rf, validation)</code></pre>
+<pre class="r"><code>predict(modFit.rf, validation)</code></pre>
+<pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
+## Levels: A B C D E</code></pre>
+<pre class="r"><code>predict(modFit.aggregated.rf, validation)</code></pre>
+<pre><code>##  [1] B A E A A E D B A A A C B A E E A B B B
+## Levels: A B C D E</code></pre>
 <p>The submission of the modFit.rf prediction resulted in a score of 20/20 100%.</p>
 </div>
 
