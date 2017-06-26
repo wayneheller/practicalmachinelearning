@@ -133,7 +133,7 @@ $(document).ready(function () {
 </div>
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
-<p>Using a Random Forest model, I was able to achieve an accuracy of 99.86% with a 95% confidence interval of (0.9975, 0.9993) on the data provided. Applying this model to the validation dataset resulted in a score of 100 prediction accuracy% My attempt to aggregate the data to simplify the computational intensity resulted in an overfitted model that was not selected.</p>
+<p>Using a Random Forest model, I was able to achieve an accuracy of 99.86% with a 95% confidence interval of (0.9975, 0.9993) on the data provided. Applying this model to the validation dataset resulted in a score of 100 prediction accuracy% My attempt to aggregate the data to simplify the computational intensity resulted in a slightly overfitted model that was not selected.</p>
 </div>
 <div id="data-preparation-and-partitioning" class="section level2">
 <h2>Data Preparation and Partitioning</h2>
@@ -262,7 +262,7 @@ confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggre
 <div id="conclusion" class="section level2">
 <h2>CONCLUSION</h2>
 <ol style="list-style-type: decimal">
-<li><p>Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were less accurate (80% compared to 100%), indicating overfitting of the model to the training data. One indication of this overfitting is in the OOB Error Rates for the Random Forrest models. For the non-aggregated model OOB error is 0.83% and for the aggregated data OOB error rate is 11.33%</p></li>
+<li><p>Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were less accurate (95% compared to 100%), indicating overfitting of the model to the training data. One indication of this overfitting is in the OOB Error Rates for the Random Forrest models. For the non-aggregated model OOB error is 0.86% and for the aggregated data OOB error rate is 10.98%</p></li>
 <li><p>The Random Forest and Gradient Boosting approaches yeilded high accuracy in comparison to the classification tree approach.</p></li>
 <li><p>Prediction on validation dataset using the Random Forest model:</p></li>
 </ol>
@@ -273,6 +273,7 @@ confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggre
 <pre><code>##  [1] B A A A A E D B A A B C B A E E A B B B
 ## Levels: A B C D E</code></pre>
 <p>The submission of the modFit.rf prediction resulted in a score of 20/20 100%.</p>
+<p>The submission of the modFit.aggregated.rf prediction would have resulted in a score of 19/20 95%.</p>
 </div>
 
 
