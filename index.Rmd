@@ -108,7 +108,8 @@ At this point there are two training and two test data.frames build of of the pm
 ## MODEL CREATION AND SELECTION
 Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and Classification Trees (rpart) and test with both datasets.  For feature selection, after removing the summary columns, I chose to build the models off of the raw sensor data columns.
 
-```{r cache=TRUE, echo=TRUE}
+```{r cache=TRUE, echo=TRUE,  message=FALSE}
+set.seed(12345)
 
 # Random Forest
 modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
@@ -143,7 +144,7 @@ confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggre
 A requirement of this project is a discussion of cross validation methods used.  The default method of bootstrapped sampling built into the caret package provided very high accuracy so it was sufficient for this purpose.  Had I not run out of time, I would have experimented with changing the defaults to better understand the impact.
 
 ## CONCLUSION
-1) Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were poor, indicating overfitting of the model to the training data.  One indication of this overfitting is in the OOB Error Rates for the Random Forrest models.  For the non-aggregated model OOB error is 0.87% and for the aggregated data OOB error rate is 11.77%
+1) Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were less accurate (80% compared to 100%), indicating overfitting of the model to the training data.  One indication of this overfitting is in the OOB Error Rates for the Random Forrest models.  For the non-aggregated model OOB error is 0.83% and for the aggregated data OOB error rate is 11.33%
 
 2) The Random Forest and Gradient Boosting approaches yeilded high accuracy in comparison to the classification tree approach.  
 

@@ -112,38 +112,12 @@ Approach: Build 6 models using Random Forest (rf), Gradient Boosting (gbm), and 
 ```r
 # Random Forest
 modFit.rf <- train(classe ~ ., method="rf", data = measurementrows.training[, c("classe", measurement.col.names)])
-```
-
-```
-## Loading required package: randomForest
-```
-
-```
-## randomForest 4.6-12
-```
-
-```
-## Type rfNews() to see new features/changes/bug fixes.
-```
-
-```
-## 
-## Attaching package: 'randomForest'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     margin
-```
-
-```r
 confusionMatrix(predict(modFit.rf, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 ```
 
 ```
 ##  Accuracy 
-## 0.9884047
+## 0.9918451
 ```
 
 ```r
@@ -156,16 +130,16 @@ modFit.rf$finalModel
 ##  randomForest(x = x, y = y, mtry = param$mtry) 
 ##                Type of random forest: classification
 ##                      Number of trees: 500
-## No. of variables tried at each split: 27
+## No. of variables tried at each split: 2
 ## 
-##         OOB estimate of  error rate: 0.83%
+##         OOB estimate of  error rate: 0.86%
 ## Confusion matrix:
 ##      A    B    C    D    E class.error
-## A 3357    4    1    1    0 0.001784121
-## B   19 2288    9    1    0 0.012516185
-## C    0    9 2033    6    0 0.007324219
-## D    0    1   31 1892    2 0.017653167
-## E    0    2    3    9 2106 0.006603774
+## A 3343    2    0    1    1  0.00119510
+## B   18 2253    6    0    0  0.01054018
+## C    0   18 2019   10    0  0.01367855
+## D    0    0   40 1886    2  0.02178423
+## E    0    0    0    3 2172  0.00137931
 ```
 
 ```r
@@ -174,8 +148,8 @@ confusionMatrix(predict(modFit.aggregated.rf, aggregatedrows.testing), aggregate
 ```
 
 ```
-## Accuracy 
-##        1
+##  Accuracy 
+## 0.9976553
 ```
 
 ```r
@@ -190,63 +164,25 @@ modFit.aggregated.rf$finalModel
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 2
 ## 
-##         OOB estimate of  error rate: 11.33%
+##         OOB estimate of  error rate: 10.98%
 ## Confusion matrix:
 ##     A   B   C   D   E class.error
-## A 237   3   1   1   0  0.02066116
-## B  21 135   9   2   1  0.19642857
-## C   0  15 132   2   0  0.11409396
-## D   3   0  17 116   5  0.17730496
-## E   0   6   6   5 139  0.10897436
+## A 236   3   1   2   0  0.02479339
+## B  20 136  10   1   0  0.18562874
+## C   0  13 136   2   0  0.09933775
+## D   2   0  17 116   6  0.17730496
+## E   0   7   5   5 138  0.10967742
 ```
 
 ```r
 # Gradient Boosting
 modFit.gbm <- train(classe ~ ., method="gbm", verbose=FALSE, data = measurementrows.training[, c("classe", measurement.col.names)])
-```
-
-```
-## Loading required package: gbm
-```
-
-```
-## Loading required package: survival
-```
-
-```
-## 
-## Attaching package: 'survival'
-```
-
-```
-## The following object is masked from 'package:caret':
-## 
-##     cluster
-```
-
-```
-## Loading required package: splines
-```
-
-```
-## Loading required package: parallel
-```
-
-```
-## Loaded gbm 2.1.3
-```
-
-```
-## Loading required package: plyr
-```
-
-```r
 confusionMatrix(predict(modFit.gbm, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 ```
 
 ```
 ##  Accuracy 
-## 0.9620285
+## 0.9589704
 ```
 
 ```r
@@ -256,25 +192,18 @@ confusionMatrix(predict(modFit.aggregated.gbm, aggregatedrows.testing) , aggrega
 
 ```
 ##  Accuracy 
-## 0.9988304
+## 0.9988277
 ```
 
 ```r
 # Classification Tree
 modFit.rpart <- train(classe ~ ., method="rpart", data = measurementrows.training[, c("classe", measurement.col.names)])
-```
-
-```
-## Loading required package: rpart
-```
-
-```r
 confusionMatrix(predict(modFit.rpart, measurementrows.testing) , measurementrows.testing$classe)$overall[1]
 ```
 
 ```
 ##  Accuracy 
-## 0.4956677
+## 0.4915902
 ```
 
 ```r
@@ -283,8 +212,8 @@ confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggre
 ```
 
 ```
-## Accuracy 
-## 0.548538
+##  Accuracy 
+## 0.5111372
 ```
 
 ```r
@@ -298,7 +227,7 @@ confusionMatrix(predict(modFit.aggregated.rpart, aggregatedrows.testing) , aggre
 A requirement of this project is a discussion of cross validation methods used.  The default method of bootstrapped sampling built into the caret package provided very high accuracy so it was sufficient for this purpose.  Had I not run out of time, I would have experimented with changing the defaults to better understand the impact.
 
 ## CONCLUSION
-1) Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were poor, indicating overfitting of the model to the training data.  One indication of this overfitting is in the OOB Error Rates for the Random Forrest models.  For the non-aggregated model OOB error is 0.87% and for the aggregated data OOB error rate is 11.77%
+1) Aggregating the sensor data by num_window produced a model with greater accuracy on the testing dataset and less computational intensity than using the full dataset of measurements; however, the results on the validation dataset were less accurate (80% compared to 100%), indicating overfitting of the model to the training data.  One indication of this overfitting is in the OOB Error Rates for the Random Forrest models.  For the non-aggregated model OOB error is 0.83% and for the aggregated data OOB error rate is 11.33%
 
 2) The Random Forest and Gradient Boosting approaches yeilded high accuracy in comparison to the classification tree approach.  
 
@@ -318,7 +247,7 @@ predict(modFit.aggregated.rf, validation)
 ```
 
 ```
-##  [1] B A E A A E D B A A A C B A E E A B B B
+##  [1] B A A A A E D B A A B C B A E E A B B B
 ## Levels: A B C D E
 ```
 
